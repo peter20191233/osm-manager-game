@@ -114,9 +114,12 @@ async function run(name, browserType, base) {
   await new Promise(resolve => server.listen(0,'127.0.0.1',resolve));
   const base = process.env.PWA_URL || `http://127.0.0.1:${server.address().port}/games/osm/`;
   try {
-    await run('webkit',webkit,base);
-    if (!server.listening) await new Promise(resolve => server.listen(Number(new URL(base).port),'127.0.0.1',resolve));
-    await run('chromium',chromium,base);
+    const browsers = {webkit, chromium};
+    for (const name of (process.env.PWA_BROWSERS || 'webkit,chromium').split(',')) {
+      if (!browsers[name]) throw new Error('Unsupported browser '+name);
+      if (!server.listening) await new Promise(resolve => server.listen(Number(new URL(base).port),'127.0.0.1',resolve));
+      await run(name,browsers[name],base);
+    }
   }
   finally {server.close();}
 })().catch(error => { console.error(error); process.exitCode=1; });

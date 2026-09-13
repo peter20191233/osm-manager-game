@@ -1,0 +1,36 @@
+name: Web app audio on macOS
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  webkit-audio:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build self-contained web app
+        run: |
+          python3 build_webapp.py
+          mkdir -p .publishing
+          python3 -c "import content,json,pathlib; pathlib.Path('.publishing/pwa-scenarios.json').write_text(json.dumps(content.SCENARIOS),encoding='utf-8')"
+      - name: Install WebKit test runner
+        run: |
+          npm install --prefix .publishing/web-test playwright@1.62.1
+          node .publishing/web-test/node_modules/playwright/cli.js install webkit
+      - name: Verify music and game with the server offline
+        env:
+          PLAYWRIGHT_MODULE: ${{ github.workspace }}/.publishing/web-test/node_modules/playwright
+          PWA_FIXTURES: ${{ github.workspace }}/.publishing/pwa-scenarios.json
+          PWA_BROWSERS: webkit
+        run: node pwa/verify.cjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: webkit-macos-audio
+          retention-days: 14
+          path: |
+            .publishing/pwa-qa/*.json
+            .publishing/pwa-qa/*.png
