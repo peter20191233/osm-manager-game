@@ -120,11 +120,17 @@ def toggle_sound(event=None):
     sound = not sound
     write_storage("sound", "1" if sound else "0")
     document["sound-button"].attrs["aria-pressed"] = str(sound).lower()
-    document["sound-button"].attrs["aria-label"] = "Выключить звук" if sound else "Включить звук"
-    document["sound-button"].attrs["title"] = "Выключить звук" if sound else "Включить звук"
+    document["sound-button"].attrs["aria-label"] = "Выключить музыку и звуки" if sound else "Включить музыку и звуки"
+    document["sound-button"].attrs["title"] = "Выключить музыку и звуки" if sound else "Включить музыку и звуки"
     document["sound-button"].html = '♪' if sound else '♪<span class="sound-off">×</span>'
     if sound:
         play_note()
+    sync_music()
+
+
+def sync_music():
+    playing = session is not None and not session.paused and not session.finished
+    window.osmMusic.sync(sound, playing)
 
 
 def update_stats():
@@ -142,6 +148,7 @@ def update_controls():
     document["scene"].class_name = "scene paused" if session and session.paused else "scene"
     if session:
         document["next-button"].disabled = session.paused
+    sync_music()
 
 
 def show_timer():
@@ -424,11 +431,12 @@ document["modal-close"].bind("click", close_modal)
 document["modal"].bind("close", after_close)
 document.bind("visibilitychange", visibility)
 document.bind("keydown", keyboard)
-if read_storage("sound", "0") == "1":
+if read_storage("sound", "1") == "1":
     sound = True
     document["sound-button"].html = "♪"
     document["sound-button"].attrs["aria-pressed"] = "true"
-    document["sound-button"].attrs["aria-label"] = "Выключить звук"
+    document["sound-button"].attrs["aria-label"] = "Выключить музыку и звуки"
+    document["sound-button"].attrs["title"] = "Выключить музыку и звуки"
 draw_visitor(0)
 best_label()
 document["next-button"].text = "Начать смену →"

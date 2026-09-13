@@ -84,6 +84,33 @@ public final class OfflineGameTest {
     }
 
     @Test
+    public void bundledMusicPlaysMutesAndPausesOffline() throws Exception {
+        if (!"true".equals(text("document.getElementById('sound-button').getAttribute('aria-pressed')"))) {
+            tapOnScreen("sound-button");
+        }
+        tapOnScreen("next-button");
+        String audio = "document.getElementById('background-music')";
+        awaitJs(audio + ".readyState >= 2 && !" + audio + ".paused && " + audio + ".currentTime > 0.1",
+                "Bundled music must decode and play without network", 15_000);
+        assertTrue(((Number) evaluate(audio + ".duration")).doubleValue() > 79);
+        assertEquals(Boolean.TRUE, evaluate(audio + ".loop"));
+        assertEquals(Boolean.TRUE, evaluate(audio + ".src.startsWith('data:audio/mpeg;base64,')"));
+        tapOnScreen("sound-button");
+        awaitJs(audio + ".paused", "Mute must stop the music", 5_000);
+        assertEquals("0", text("localStorage.getItem('osm-sound')"));
+        tapOnScreen("sound-button");
+        awaitJs("!" + audio + ".paused", "Unmute must resume music", 5_000);
+        tapOnScreen("pause-button");
+        awaitJs(audio + ".paused", "Game pause must stop music", 5_000);
+        tapOnScreen("pause-button");
+        awaitJs("!" + audio + ".paused", "Continue must resume music", 5_000);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        awaitJs(audio + ".paused", "Backgrounding must stop music", 5_000);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+        awaitJs(audio + ".paused", "Returning must keep the game paused", 5_000);
+    }
+
+    @Test
     public void fullOfflineShiftScoresBothRoutesAndKeepsRecordAfterRelaunch() throws Exception {
         // Use normal player controls. A balanced 12-client deck contains each
         // of the six categories twice; repeatedly choosing accounts therefore

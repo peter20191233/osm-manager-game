@@ -1,6 +1,6 @@
 /* A cache belongs only to this installation path, never to the whole website. */
 const PREFIX = 'osm-pwa-' + self.registration.scope + '-';
-const CACHE = PREFIX + 'f036fe9297e61ccd';
+const CACHE = PREFIX + '09e303445994f6ed';
 const FILES = ['index.html', 'install.js', 'install.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 const urls = FILES.map(name => new URL(name, self.registration.scope).href);
 self.addEventListener('install', event => {

@@ -1,5 +1,5 @@
-const CACHE = 'osm-game-v4';
-const FILES = ['./', './index.html', './styles.css', './bootstrap.js', './game.py', './engine.py', './content.py', './scene.svg', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './vendor/brython.min.js'];
+const CACHE = 'osm-game-v5-music';
+const FILES = ['./', './index.html', './styles.css', './bootstrap.js', './music.js', './assets/music-theme.mp3', './game.py', './engine.py', './content.py', './scene.svg', './manifest.webmanifest', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './vendor/brython.min.js'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
 });

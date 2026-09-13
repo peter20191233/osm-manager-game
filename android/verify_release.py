@@ -107,7 +107,7 @@ def main():
             "FAILURES", "INSTRUMENTATION_FAILED", "INSTRUMENTATION_ABORTED",
             "INSTRUMENTATION_RESULT: shortMsg=", "Process crashed"))
         if (completed.returncode != 0 or failed
-                or not re.search(r"(?m)^\s*OK\s+\(3 tests\)\s*$", output)
+                or not re.search(r"(?m)^\s*OK\s+\(4 tests\)\s*$", output)
                 or not re.search(r"(?m)^INSTRUMENTATION_CODE:\s*-1\s*$", output)):
             raise RuntimeError("Signed release instrumentation failed; see instrumentation.txt")
     finally:
@@ -130,7 +130,8 @@ def main():
               "clean_install": True, "enabled_start_button": True,
               "start_tap_enabled_ticket_category": True, "mode": "practice",
               "ticket_tap_produced_scored_feedback": True,
-              "instrumentation_tests_passed": 3,
+              "instrumentation_tests_passed": 4,
+              "bundled_music_playback_mute_pause_verified": True,
               "installed_apk_hash_and_certificate_verified": True}
     (args.evidence / "result.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

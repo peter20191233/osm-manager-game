@@ -1,0 +1,12 @@
+{
+  "title": "Спокойная смена",
+  "composer": "Codex (AI-assisted original composition)",
+  "method": "Explicit AI-composed score; local additive synthesis, no external audio model or samples",
+  "bpm": 96,
+  "duration_seconds": 80.0,
+  "sample_rate": 32000,
+  "channels": 2,
+  "mp3_bytes": 640512,
+  "peak": 0.55,
+  "rms": 0.09812054110336439
+}

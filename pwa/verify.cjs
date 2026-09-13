@@ -54,6 +54,15 @@ async function run(name, browserType, base) {
     await offline.goto(base + 'index.html?offline-test=1');
     await ready(offline);
     await offline.locator('#next-button').tap();
+    await offline.waitForFunction(() => {
+      const audio = document.getElementById('background-music');
+      return audio.readyState >= 2 && !audio.paused && audio.currentTime > .1;
+    }, {timeout:15000});
+    assert.ok(await offline.locator('#background-music').evaluate(el => el.duration > 79 && el.loop && el.src.startsWith('data:audio/mpeg;base64,')));
+    await offline.locator('#sound-button').tap();
+    assert.equal(await offline.locator('#background-music').evaluate(el => el.paused), true);
+    await offline.locator('#sound-button').tap();
+    await offline.waitForFunction(() => !document.getElementById('background-music').paused);
     let score = 0;
     for (let i=0; i<12; i++) {
       const text = await offline.locator('#client-request').innerText();
@@ -76,6 +85,7 @@ async function run(name, browserType, base) {
     assert.ok(await offline.evaluate(() => caches.has('unrelated-site-cache')));
     await offline.locator('#next-button').tap();
     await offline.locator('#pause-button').tap();
+    assert.equal(await offline.locator('#background-music').evaluate(el => el.paused), true);
     const paused = await offline.locator('#patience-label').innerText();
     await offline.waitForTimeout(1200);
     assert.equal(await offline.locator('#patience-label').innerText(), paused);
@@ -95,7 +105,7 @@ async function run(name, browserType, base) {
     await restarted.goto(base);
     await ready(restarted);
     assert.equal(await restarted.locator('#best-label').innerText(), saved, 'The record must survive closing the whole browser');
-    const result = {browser:name,version,offlineShiftClients:12,score,recordPersisted:true,offlineReload:true,offlineColdStart:true,unrelatedCachePreserved:true,portraitAndLandscape:true,pageErrors:errors};
+    const result = {browser:name,version,offlineShiftClients:12,score,recordPersisted:true,offlineReload:true,offlineColdStart:true,bundledMusicPlaybackMutePause:true,unrelatedCachePreserved:true,portraitAndLandscape:true,pageErrors:errors};
     fs.writeFileSync(path.join(evidence,name+'.json'),JSON.stringify(result,null,2));
     console.log(JSON.stringify(result));
   } finally { await context.close(); }

@@ -43,13 +43,14 @@ def inline_game(root: Path) -> str:
         raise ValueError("CSS contains an unexpected closing style tag")
     replace_once('<link rel="stylesheet" href="styles.css">', f"<style>\n{styles}\n</style>")
     replace_once('<link rel="manifest" href="manifest.webmanifest">', "")
-    for name in ("vendor/brython.min.js", "bootstrap.js"):
+    for name in ("vendor/brython.min.js", "bootstrap.js", "music.js"):
         source = escaped_script((root / name).read_text(encoding="utf-8"))
         setup = ""
         if name == "vendor/brython.min.js":
             setup = "<script>window.osmStandalone=true;window.__BRYTHON__={brython_path:new URL('.',location.href).href};</script>\n"
         replace_once(f'<script defer src="{name}"></script>', f"{setup}<script>\n{source}\n</script>")
     replace_once('src="scene.svg"', f'src="{data_uri("scene.svg", "image/svg+xml")}"')
+    replace_once('src="assets/music-theme.mp3"', f'src="{data_uri("assets/music-theme.mp3", "audio/mpeg")}"')
     replace_once('href="assets/icon.svg"', f'href="{data_uri("assets/icon.svg", "image/svg+xml")}"')
     replace_once('href="assets/icon-192.png"', f'href="{data_uri("assets/icon-192.png", "image/png")}"')
     page = page.replace('class="brand" href="./"', 'class="brand" href="#"')
@@ -85,7 +86,7 @@ def main(argv: list[str] | None = None) -> int:
     release_files = (
         *STATIC_FILES,
         "launcher.py", "Запустить игру.cmd", "Играть на телефоне.cmd",
-        "build_release.py", "README.md", "SOURCES.md", "ANDROID.md",
+        "build_release.py", "README.md", "SOURCES.md", "ANDROID.md", "IOS.md", "MUSIC.md",
         "tests/test_engine.py", "tests/test_content.py", "tests/test_launcher.py",
     )
     missing = [name for name in release_files if not (root / name).is_file()]

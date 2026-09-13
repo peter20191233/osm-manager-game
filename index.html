@@ -14,8 +14,10 @@
   <link rel="stylesheet" href="styles.css">
   <script defer src="vendor/brython.min.js"></script>
   <script defer src="bootstrap.js"></script>
+  <script defer src="music.js"></script>
 </head>
 <body onload="brython({debug:1,cache:true,indexedDB:false})">
+  <audio id="background-music" src="assets/music-theme.mp3" loop preload="none" hidden></audio>
   <header class="site-header">
     <a class="brand" href="./" aria-label="Будни ОСМ, главная"><span class="brand-icon">о<span>с</span>м</span><span class="brand-copy">Маленькая игра<br><strong>о большой заботе</strong></span></a>
     <nav aria-label="Меню"><span class="nav-current">Игровая комната</span><button id="guide-button" class="nav-button">Справочник услуг <span>↗</span></button><button id="sound-button" class="icon-button" aria-label="Включить звук" title="Включить звук" aria-pressed="false">♪<span class="sound-off">×</span></button></nav>

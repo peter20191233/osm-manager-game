@@ -18,6 +18,8 @@ STATIC_FILES = (
     "index.html",
     "styles.css",
     "bootstrap.js",
+    "music.js",
+    "assets/music-theme.mp3",
     "game.py",
     "engine.py",
     "content.py",
@@ -32,6 +34,7 @@ STATIC_FILES = (
 )
 
 MIME_TYPES = {
+    ".mp3": "audio/mpeg",
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
