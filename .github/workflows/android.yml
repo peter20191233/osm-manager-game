@@ -2,12 +2,19 @@ name: Android APK
 
 on:
   workflow_dispatch:
+    inputs:
+      signed_release:
+        description: Build and verify the signed release APK
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
 jobs:
   build-and-test:
+    if: ${{ !inputs.signed_release || github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -53,6 +60,25 @@ jobs:
       - name: Build Android and run lint
         working-directory: android
         run: gradle --no-daemon :app:assembleRelease :app:assembleDebug :app:assembleDebugAndroidTest :app:lintRelease
+      - name: Sign release APK with the protected release key
+        if: ${{ inputs.signed_release }}
+        working-directory: android
+        env:
+          OSM_KEYSTORE_BASE64: ${{ secrets.OSM_KEYSTORE_BASE64 }}
+          OSM_KEYSTORE_PASSWORD: ${{ secrets.OSM_KEYSTORE_PASSWORD }}
+          OSM_KEY_ALIAS: ${{ secrets.OSM_KEY_ALIAS }}
+          OSM_KEY_PASSWORD: ${{ secrets.OSM_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$OSM_KEYSTORE_BASE64"
+          umask 077
+          signing_directory="$RUNNER_TEMP/osm-signing"
+          mkdir -p "$signing_directory"
+          export OSM_KEYSTORE_FILE="$signing_directory/osm-release.p12"
+          trap 'rm -f "$OSM_KEYSTORE_FILE"' EXIT
+          python3 -c 'import os,base64,pathlib; pathlib.Path(os.environ["OSM_KEYSTORE_FILE"]).write_bytes(base64.b64decode(os.environ["OSM_KEYSTORE_BASE64"], validate=True))'
+          gradle --no-daemon :app:assembleRelease
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/osm-manager-game-android.apk
       - name: Start Android emulator without network
         shell: bash
         run: |
@@ -77,6 +103,9 @@ jobs:
       - name: Test installed APK offline
         working-directory: android
         run: gradle --no-daemon :app:connectedDebugAndroidTest
+      - name: Verify signed release installation and capture the game
+        if: ${{ inputs.signed_release }}
+        run: python3 android/verify_release.py --apk android/app/build/outputs/apk/release/osm-manager-game-android.apk --certificate-sha256 24280b33753e25bb2e90ae4af85d5862da25c44b72be76ddf86a534a58a16f7e
       - name: Collect APK and test evidence
         if: always()
         shell: bash
