@@ -1,0 +1,38 @@
+{
+  "platform": "Playwright on Windows; real iPhone installation not tested",
+  "results": [
+    {
+      "browser": "webkit",
+      "version": "26.5",
+      "offlineShiftClients": 12,
+      "score": 0,
+      "recordPersisted": true,
+      "offlineReload": true,
+      "offlineColdStart": true,
+      "unrelatedCachePreserved": true,
+      "portraitAndLandscape": true,
+      "pageErrors": []
+    },
+    {
+      "browser": "chromium",
+      "version": "151.0.7922.34",
+      "offlineShiftClients": 12,
+      "score": 0,
+      "recordPersisted": true,
+      "offlineReload": true,
+      "offlineColdStart": true,
+      "unrelatedCachePreserved": true,
+      "portraitAndLandscape": true,
+      "pageErrors": []
+    }
+  ],
+  "files": {
+    "icon-192.png": "eedd5db92c7626ec395854f9db644a5129a736bd76a015e05d17b7ac6947b796",
+    "icon-512.png": "12d33b8cf4eba7d59ab9cc66c38bed5785b5e6a33ad0c60035c0ce679bdb1aff",
+    "index.html": "cc446ca25cf5bf3b7c16c090b00677420371c3c5d0136581f8d41eafc8d09336",
+    "install.css": "43494a1233f43fc175af8e1eed817fbcb462716720f3548893b1b3aa8f947dce",
+    "install.js": "0854a7ba702ae981fc4b7d429c18697b4b48f905f2a2e48188ecbfdc1c1e7b2f",
+    "manifest.webmanifest": "fb3e4cb0a8f3b522f1cc41a528dda121ed7e6e17af700ec815e29f9809c1544a",
+    "sw.js": "83153f12e0fd4467ae5bacc8ee35b462e44403cfe5a53b451ac765aac67ee10e"
+  }
+}

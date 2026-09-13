@@ -1,0 +1,13 @@
+body{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.install-panel{max-width:1264px;margin:16px auto 0;padding:14px 18px;background:#e9ede2;border:1px solid #d5ddcd;border-radius:12px;font-size:14px;line-height:1.6}
+.install-panel summary{cursor:pointer;min-height:44px;display:list-item;align-content:center;font-weight:650}
+.install-panel ol{margin:4px 0 12px;padding-left:22px}
+.install-panel p{margin:6px 0}
+.install-panel small{font-size:13px;color:#52604c}
+#offline-status{font-weight:550}
+.in-game .install-panel{display:none}
+.in-game .heading-row{display:none}
+@media(max-width:1000px){.shift-note{display:none}}
+@media(max-width:1350px){.install-panel{margin-inline:34px}}
+@media(max-width:760px){.install-panel{margin-inline:20px}.icon-button{min-width:44px;min-height:44px}.nav-button,.text-button{min-height:44px}}
+@media(max-width:370px){.install-panel{margin-inline:12px}}
