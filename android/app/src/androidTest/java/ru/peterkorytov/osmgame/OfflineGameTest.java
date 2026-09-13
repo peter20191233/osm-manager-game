@@ -233,8 +233,13 @@ public final class OfflineGameTest {
         while (SystemClock.elapsedRealtime() < deadline) {
             scenario.onActivity(activity -> {
                 ArrayList<View> matches = new ArrayList<>();
+                // Release R8 inlines the app's non-final R fields and removes
+                // the generated R class. Resolve the still-used resource by name.
+                int loadingId = activity.getResources().getIdentifier(
+                        "loading", "string", activity.getPackageName());
+                assertTrue("The native loading label resource must exist", loadingId != 0);
                 activity.getWindow().getDecorView().findViewsWithText(matches,
-                        activity.getString(R.string.loading), View.FIND_VIEWS_WITH_TEXT);
+                        activity.getString(loadingId), View.FIND_VIEWS_WITH_TEXT);
                 loadingVisible.set(false);
                 for (View match : matches) {
                     if (match.isShown()) loadingVisible.set(true);
