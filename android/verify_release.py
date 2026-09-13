@@ -82,19 +82,32 @@ def main():
         (args.evidence / name).write_bytes(data)
 
     def hierarchy():
-        adb("shell", "uiautomator", "dump", "--compressed", "/sdcard/osm-release-ui.xml")
+        # Android 12's uiautomator can exit successfully without producing a
+        # fresh dump while animated accessibility content is not idle. Never
+        # mistake a previous screen's XML for the current screen.
+        adb("shell", "rm", "-f", "/sdcard/osm-release-ui.xml")
+        output = adb("shell", "uiautomator", "dump", "--compressed", "/sdcard/osm-release-ui.xml")
+        with (args.evidence / "uiautomator.log").open("a", encoding="utf-8") as log:
+            log.write(output + "\n")
+        if "dumped to:" not in output.lower():
+            return None, ""
         text = adb("shell", "cat", "/sdcard/osm-release-ui.xml")
         (args.evidence / "latest-ui.xml").write_text(text, encoding="utf-8")
         tree = ET.fromstring(text)
-        all_text = " ".join(n.get("text", "") + " " + n.get("content-desc", "") for n in tree.iter("node"))
+        all_text = normalized_text(tree)
         if "Не удалось открыть игру" in all_text or "Открыть ещё раз" in all_text:
             raise RuntimeError("Native release loading error is visible")
         return tree, all_text
 
+    def normalized_text(node):
+        return " ".join(" ".join(n.get("text", "") + " " + n.get("content-desc", "")
+                                 for n in node.iter("node")).split())
+
     def visible_button(tree, label):
         for node in tree.iter("node"):
-            text = " ".join(n.get("text", "") + " " + n.get("content-desc", "") for n in node.iter("node"))
-            if (label not in text or node.get("class") != "android.widget.Button"
+            text = normalized_text(node)
+            if (label not in text or node.get("class") not in (
+                    "android.widget.Button", "android.widget.ToggleButton")
                     or node.get("enabled") != "true" or node.get("clickable") != "true"):
                 continue
             bounds = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.get("bounds", ""))
@@ -105,38 +118,71 @@ def main():
                     return x, y
         return None
 
-    def find_button(label, timeout=60):
+    def find_button(label, timeout=60, direction="down"):
         deadline = time.monotonic() + timeout
         swipes = 0
         while time.monotonic() < deadline:
             tree, text = hierarchy()
+            if tree is None:
+                time.sleep(1)
+                continue
             point = visible_button(tree, label)
             if point:
                 return point
             if "Открываем отделение" not in text and swipes < 8:
-                adb("shell", "input", "swipe", str(width // 2), str(height * 4 // 5),
-                    str(width // 2), str(height // 3), "300")
+                start, end = height * 4 // 5, height // 3
+                if direction == "up":
+                    start, end = end, start
+                adb("shell", "input", "swipe", str(width // 2), str(start),
+                    str(width // 2), str(end), "300")
                 swipes += 1
             time.sleep(1)
         raise RuntimeError("Release UI did not expose an enabled button: " + label)
 
     try:
+        find_button("Начать смену")
+        # The timed mode already has debug instrumentation coverage. Use the
+        # actual player-facing training switch here so Android 12 UIAutomator
+        # can inspect the release without a continuously changing timer.
+        training = find_button("Тренировка", direction="up")
+        adb("shell", "input", "tap", str(training[0]), str(training[1]))
+        selected_deadline = time.monotonic() + 45
+        while time.monotonic() < selected_deadline:
+            tree, _ = hierarchy()
+            if tree is not None and any(n.get("resource-id") == "mode-practice"
+                                        and n.get("checked") == "true" for n in tree.iter("node")):
+                (args.evidence / "training-ui.xml").write_bytes(
+                    (args.evidence / "latest-ui.xml").read_bytes())
+                break
+            time.sleep(1)
+        else:
+            raise RuntimeError("Release training mode was not selected")
         point = find_button("Начать смену")
         screenshot("release-ready.png")
         (args.evidence / "ready-ui.xml").write_bytes((args.evidence / "latest-ui.xml").read_bytes())
         adb("shell", "input", "tap", str(point[0]), str(point[1]))
         # Enabling a ticket category requires the Python click handler to have
         # started a shift; HTML alone cannot satisfy this check.
-        find_button("Счета и карты", timeout=25)
+        accounts = find_button("Счета и карты", timeout=90)
         screenshot("release-playing.png")
         (args.evidence / "playing-ui.xml").write_bytes((args.evidence / "latest-ui.xml").read_bytes())
+        adb("shell", "input", "tap", str(accounts[0]), str(accounts[1]))
+        find_button("Следующий клиент", direction="up")
+        answered = ET.fromstring((args.evidence / "latest-ui.xml").read_text(encoding="utf-8"))
+        feedback_text = normalized_text(answered)
+        if not any(value in feedback_text for value in (
+                "Верный маршрут! +1 к рейтингу", "Другой маршрут. −1 к рейтингу")):
+            raise RuntimeError("Release ticket tap did not produce scored feedback")
+        screenshot("release-answered.png")
+        (args.evidence / "answered-ui.xml").write_bytes((args.evidence / "latest-ui.xml").read_bytes())
         if not adb("shell", "pidof", PACKAGE):
             raise RuntimeError("Release app terminated after launch")
         report = {"status": "passed", "api": int(api), "package": PACKAGE,
                   "apk_sha256": hashlib.sha256(args.apk.read_bytes()).hexdigest(),
                   "certificate_sha256": expected, "internet_permission": False,
                   "wifi_and_mobile_data_disabled": True, "clean_install": True,
-                  "enabled_start_button": True, "start_tap_enabled_ticket_category": True}
+                  "enabled_start_button": True, "start_tap_enabled_ticket_category": True,
+                  "mode": "practice", "ticket_tap_produced_scored_feedback": True}
         (args.evidence / "result.json").write_text(
             json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(report, ensure_ascii=False))
