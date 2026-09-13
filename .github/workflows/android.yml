@@ -77,7 +77,7 @@ jobs:
           export OSM_KEYSTORE_FILE="$signing_directory/osm-release.p12"
           trap 'rm -f "$OSM_KEYSTORE_FILE"' EXIT
           python3 -c 'import os,base64,pathlib; pathlib.Path(os.environ["OSM_KEYSTORE_FILE"]).write_bytes(base64.b64decode(os.environ["OSM_KEYSTORE_BASE64"], validate=True))'
-          gradle --no-daemon :app:assembleRelease
+          gradle --no-daemon -PosmTestRelease :app:assembleRelease :app:assembleReleaseAndroidTest
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/osm-manager-game-android.apk
       - name: Start Android emulator without network
         shell: bash
@@ -101,9 +101,10 @@ jobs:
           adb shell svc wifi disable
           adb shell svc data disable
       - name: Test installed APK offline
+        if: ${{ !inputs.signed_release }}
         working-directory: android
         run: gradle --no-daemon :app:connectedDebugAndroidTest
-      - name: Verify signed release installation and capture the game
+      - name: Verify signed release with full offline instrumentation
         if: ${{ inputs.signed_release }}
         run: python3 android/verify_release.py --apk android/app/build/outputs/apk/release/osm-manager-game-android.apk --certificate-sha256 24280b33753e25bb2e90ae4af85d5862da25c44b72be76ddf86a534a58a16f7e
       - name: Collect APK and test evidence

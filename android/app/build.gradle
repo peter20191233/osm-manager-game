@@ -12,6 +12,7 @@ def hasReleaseSigning = signingValues.values().every { it != null && !it.isEmpty
 
 android {
     namespace 'ru.peterkorytov.osmgame'
+    testBuildType = providers.gradleProperty('osmTestRelease').isPresent() ? 'release' : 'debug'
     compileSdk 35
     buildToolsVersion '35.0.0'
 

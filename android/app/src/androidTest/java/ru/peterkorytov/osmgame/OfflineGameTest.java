@@ -7,10 +7,19 @@ import static org.junit.Assert.assertTrue;
 
 import android.Manifest;
 import android.app.Instrumentation;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
@@ -28,10 +37,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -87,7 +99,11 @@ public final class OfflineGameTest {
         for (int client = 1; client <= 12; client++) {
             awaitJs("!document.getElementById('category-accounts').disabled",
                     "Client " + client + " cannot receive a ticket", 10_000);
-            click("category-accounts");
+            if (client == 1) {
+                tapOnScreen("category-accounts");
+            } else {
+                click("category-accounts");
+            }
             awaitJs("document.getElementById('served').textContent === '" + client + "'",
                     "The answer was not counted", 10_000);
             boolean wasCorrect = (Boolean) evaluate(
@@ -160,6 +176,37 @@ public final class OfflineGameTest {
     @Test
     public void installedApkIsSelfContainedAndNeedsNoNetworkPermission() throws Exception {
         Context context = instrumentation.getTargetContext();
+        Bundle arguments = InstrumentationRegistry.getArguments();
+        if ("true".equals(arguments.getString("expectedRelease"))) {
+            assertFalse("The distributed release must not be debuggable",
+                    (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
+            String expectedCertificate = normalizeSha256(arguments.getString("expectedCertificate"),
+                    "expectedCertificate is required when expectedRelease=true");
+            PackageInfo installed = context.getPackageManager().getPackageInfo(
+                    context.getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES);
+            assertNotNull("Installed APK signing information is missing", installed.signingInfo);
+            assertFalse("The release must have one current signing identity",
+                    installed.signingInfo.hasMultipleSigners());
+            Signature[] history = installed.signingInfo.getSigningCertificateHistory();
+            assertNotNull("Installed APK signing certificate is missing", history);
+            assertTrue("Installed APK signing certificate is missing", history.length > 0);
+            // The last entry is the current certificate; preceding entries are any rotation history.
+            byte[] currentCertificate = history[history.length - 1].toByteArray();
+            assertEquals("Installed release certificate does not match the public release fingerprint",
+                    expectedCertificate, hex(MessageDigest.getInstance("SHA-256").digest(currentCertificate)));
+        }
+        String expectedApkSha256 = arguments.getString("expectedApkSha256");
+        if (expectedApkSha256 != null) {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            try (InputStream input = new FileInputStream(context.getApplicationInfo().sourceDir)) {
+                byte[] buffer = new byte[32_768];
+                int count;
+                while ((count = input.read(buffer)) != -1) digest.update(buffer, 0, count);
+            }
+            assertEquals("The installed APK must be exactly the signed file selected for release",
+                    normalizeSha256(expectedApkSha256, "expectedApkSha256 must be a SHA-256 digest"),
+                    hex(digest.digest()));
+        }
         assertEquals("Offline game must not request Internet access", PackageManager.PERMISSION_DENIED,
                 context.getPackageManager().checkPermission(Manifest.permission.INTERNET, context.getPackageName()));
         try (ZipFile apk = new ZipFile(context.getApplicationInfo().sourceDir)) {
@@ -199,7 +246,7 @@ public final class OfflineGameTest {
         throw new AssertionError("Native loading screen is still covering the ready game");
     }
 
-    /** One actual Android touch verifies the WebView input path, not just DOM handlers. */
+    /** Actual Android touches verify the WebView input path, not just DOM handlers. */
     private void tapOnScreen(String id) throws Exception {
         evaluate("document.getElementById(" + JSONObject.quote(id)
                 + ").scrollIntoView({block:'center', behavior:'instant'})");
@@ -207,7 +254,7 @@ public final class OfflineGameTest {
         JSONArray position = (JSONArray) evaluate("(function(){var r=document.getElementById("
                 + JSONObject.quote(id) + ").getBoundingClientRect();return [r.left+r.width/2,"
                 + "r.top+r.height/2,window.innerWidth,window.innerHeight];})()");
-        assertTrue("Start button must be visible", position.getDouble(1) >= 0
+        assertTrue("Tapped button must be visible: " + id, position.getDouble(1) >= 0
                 && position.getDouble(1) <= position.getDouble(3));
         int[] origin = new int[2];
         int[] dimensions = new int[1];
@@ -263,12 +310,50 @@ public final class OfflineGameTest {
     private void saveScreenshot(String name) throws Exception {
         Bitmap image = instrumentation.getUiAutomation().takeScreenshot();
         assertNotNull("Android screenshot capture failed", image);
-        File folder = instrumentation.getTargetContext().getExternalFilesDir("screenshots");
-        assertNotNull(folder);
-        try (FileOutputStream output = new FileOutputStream(new File(folder, name))) {
-            assertTrue(image.compress(Bitmap.CompressFormat.PNG, 100, output));
+        ContentResolver resolver = instrumentation.getTargetContext().getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, name);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH,
+                Environment.DIRECTORY_PICTURES + "/OSMReleaseQA");
+        values.put(MediaStore.Images.Media.IS_PENDING, 1);
+        Uri imageUri = null;
+        boolean published = false;
+        try {
+            // Shared media survives the test runner uninstalling the APK. These
+            // writes occur only on the disposable emulator, without storage permissions.
+            imageUri = resolver.insert(MediaStore.Images.Media.getContentUri(
+                    MediaStore.VOLUME_EXTERNAL_PRIMARY), values);
+            assertNotNull("Could not create the screenshot media entry", imageUri);
+            try (OutputStream output = resolver.openOutputStream(imageUri, "w")) {
+                assertNotNull("Could not open the screenshot media entry", output);
+                assertTrue(image.compress(Bitmap.CompressFormat.PNG, 100, output));
+            }
+            values.clear();
+            values.put(MediaStore.Images.Media.IS_PENDING, 0);
+            assertEquals("Could not publish the completed screenshot", 1,
+                    resolver.update(imageUri, values, null, null));
+            published = true;
         } finally {
             image.recycle();
+            if (!published && imageUri != null) resolver.delete(imageUri, null, null);
         }
+    }
+
+    private static String normalizeSha256(String value, String message) {
+        assertNotNull(message, value);
+        String normalized = value.trim().replace(":", "").toLowerCase(Locale.ROOT);
+        assertTrue(message, normalized.matches("[0-9a-f]{64}"));
+        return normalized;
+    }
+
+    private static String hex(byte[] bytes) {
+        char[] digits = "0123456789abcdef".toCharArray();
+        char[] result = new char[bytes.length * 2];
+        for (int index = 0; index < bytes.length; index++) {
+            result[index * 2] = digits[(bytes[index] & 0xff) >>> 4];
+            result[index * 2 + 1] = digits[bytes[index] & 0x0f];
+        }
+        return new String(result);
     }
 }
