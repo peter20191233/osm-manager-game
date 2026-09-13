@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.view.MotionEvent;
+import android.view.View;
 import android.webkit.WebView;
 
 import androidx.lifecycle.Lifecycle;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +56,7 @@ public final class OfflineGameTest {
         scenario.onActivity(activity -> webView = activity.findViewById(android.R.id.primary));
         assertNotNull("The game WebView must exist", webView);
         awaitJs("window.osmReady === true", "Python game did not start from bundled assets", 60_000);
+        awaitLoadingOverlayHidden();
         assertEquals("Six terminal categories must be available", 6,
                 ((Number) evaluate("document.querySelectorAll('.category-button').length")).intValue());
         assertEquals(Boolean.TRUE, evaluate("document.getElementById('load-error').hidden"));
@@ -175,6 +178,25 @@ public final class OfflineGameTest {
 
     private void click(String id) throws Exception {
         evaluate("document.getElementById(" + JSONObject.quote(id) + ").click()");
+    }
+
+    private void awaitLoadingOverlayHidden() {
+        long deadline = SystemClock.elapsedRealtime() + 10_000;
+        AtomicReference<Boolean> loadingVisible = new AtomicReference<>(true);
+        while (SystemClock.elapsedRealtime() < deadline) {
+            scenario.onActivity(activity -> {
+                ArrayList<View> matches = new ArrayList<>();
+                activity.getWindow().getDecorView().findViewsWithText(matches,
+                        activity.getString(R.string.loading), View.FIND_VIEWS_WITH_TEXT);
+                loadingVisible.set(false);
+                for (View match : matches) {
+                    if (match.isShown()) loadingVisible.set(true);
+                }
+            });
+            if (!loadingVisible.get()) return;
+            SystemClock.sleep(100);
+        }
+        throw new AssertionError("Native loading screen is still covering the ready game");
     }
 
     /** One actual Android touch verifies the WebView input path, not just DOM handlers. */

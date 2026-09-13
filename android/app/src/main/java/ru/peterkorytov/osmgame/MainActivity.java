@@ -263,15 +263,16 @@ public final class MainActivity extends Activity {
     @Override
     protected void onPause() {
         wasBackgrounded = true;
-        pauseGame();
-        if (webView != null) webView.onPause();
+        if (webView != null) {
+            WebView pausedView = webView;
+            // Suspend timers only AFTER the game has processed its pause button.
+            // Suspending first could leave an unexecuted pause callback in the queue.
+            pausedView.evaluateJavascript(PAUSE_GAME, result -> {
+                if (wasBackgrounded && webView == pausedView) pausedView.pauseTimers();
+            });
+            pausedView.onPause();
+        }
         super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        if (webView != null) webView.pauseTimers();
-        super.onStop();
     }
 
     @Override
