@@ -87,7 +87,7 @@ def main():
         adb("shell", "rm", "-f", SCREENSHOTS + "/" + name)
         (args.evidence / "screenshots" / name).unlink(missing_ok=True)
 
-    command = [*adb_prefix, "shell", "am", "instrument", "-w",
+    command = [*adb_prefix, "shell", "am", "instrument", "-w", "-r",
                "-e", "class", TEST_CLASS,
                "-e", "expectedRelease", "true",
                "-e", "expectedCertificate", expected,
