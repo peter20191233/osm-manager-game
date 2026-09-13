@@ -55,13 +55,14 @@ jobs:
         run: |
           sudo chmod 666 /dev/kvm
           echo no | avdmanager create avd --name osm-smoke --package 'system-images;android-${{ matrix.api }};google_apis;x86_64' --force
-          "$ANDROID_HOME/emulator/emulator" -avd osm-smoke -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel on > "$RUNNER_TEMP/emulator.log" 2>&1 &
-          timeout 240 adb wait-for-device
-          for attempt in $(seq 1 120); do
-            if [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1 ]; then break; fi
+          "$ANDROID_HOME/emulator/emulator" -avd osm-smoke -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader -accel on -feature -Vulkan > "$RUNNER_TEMP/emulator.log" 2>&1 &
+          emulator_pid=$!
+          for attempt in $(seq 1 90); do
+            if ! kill -0 "$emulator_pid" 2>/dev/null; then cat "$RUNNER_TEMP/emulator.log"; exit 1; fi
+            if [ "$(timeout 4 adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ]; then break; fi
             sleep 2
           done
-          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1
+          if [ "$(timeout 5 adb shell getprop sys.boot_completed | tr -d '\r')" != 1 ]; then cat "$RUNNER_TEMP/emulator.log"; exit 1; fi
           adb shell input keyevent 82
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
@@ -76,9 +77,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p android/evidence
-          adb pull /sdcard/Android/data/ru.peterkorytov.osmgame/files/screenshots/ android/evidence/ || true
-          adb logcat -d > android/evidence/logcat.txt || true
           cp "$RUNNER_TEMP/emulator.log" android/evidence/emulator.log 2>/dev/null || true
+          timeout 15 adb pull /sdcard/Android/data/ru.peterkorytov.osmgame/files/screenshots/ android/evidence/ || true
+          timeout 15 adb logcat -d > android/evidence/logcat.txt || true
           find android/app/build/outputs/apk -name '*.apk' -exec sha256sum {} \; > android/evidence/apk-sha256.txt || true
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
