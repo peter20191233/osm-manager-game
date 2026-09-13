@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Будни ОСМ</string>
+    <string name="loading">Открываем отделение…</string>
+    <string name="loading_note">Игра работает без интернета</string>
+    <string name="load_error">Не удалось открыть игру</string>
+    <string name="load_error_note">Попробуйте открыть её ещё раз. Ваши рекорды сохраняются на устройстве.</string>
+    <string name="retry">Открыть ещё раз</string>
+    <string name="exit">Выйти</string>
+    <string name="exit_title">Выйти из игры?</string>
+    <string name="exit_message">Текущая смена завершится. Сохранённые рекорды останутся на устройстве.</string>
+    <string name="stay">Остаться в игре</string>
+    <string name="external_title">Открыть источник в браузере?</string>
+    <string name="external_message">Для просмотра сайта банка потребуется интернет. Игра останется на паузе.</string>
+    <string name="open_browser">Открыть</string>
+    <string name="cancel">Отмена</string>
+    <string name="no_browser">На устройстве не найден браузер для этой ссылки.</string>
+    <string name="icon_background">#E8EDDD</string>
+</resources>

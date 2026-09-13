@@ -1,0 +1,77 @@
+name: Android APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [31, 35]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up verified build tools
+        shell: bash
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+          curl --fail --location --retry 3 https://services.gradle.org/distributions/gradle-8.11.1-bin.zip --output "$RUNNER_TEMP/gradle.zip"
+          echo "f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6  $RUNNER_TEMP/gradle.zip" | sha256sum --check
+          unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/gradle-8.11.1/bin" >> "$GITHUB_PATH"
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'emulator' 'system-images;android-${{ matrix.api }};google_apis;x86_64'
+      - name: Test Python and embed the complete offline game
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 build_release.py
+      - name: Build Android and run lint
+        working-directory: android
+        run: gradle --no-daemon :app:assembleRelease :app:assembleDebug :app:assembleDebugAndroidTest :app:lintRelease
+      - name: Start Android emulator without network
+        shell: bash
+        run: |
+          sudo chmod 666 /dev/kvm
+          echo no | avdmanager create avd --name osm-smoke --package 'system-images;android-${{ matrix.api }};google_apis;x86_64' --force
+          "$ANDROID_HOME/emulator/emulator" -avd osm-smoke -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel on > "$RUNNER_TEMP/emulator.log" 2>&1 &
+          timeout 240 adb wait-for-device
+          for attempt in $(seq 1 120); do
+            if [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1 ]; then break; fi
+            sleep 2
+          done
+          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1
+          adb shell input keyevent 82
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+          adb shell svc wifi disable
+          adb shell svc data disable
+      - name: Test installed APK offline
+        working-directory: android
+        run: gradle --no-daemon :app:connectedDebugAndroidTest
+      - name: Collect APK and test evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p android/evidence
+          adb pull /sdcard/Android/data/ru.peterkorytov.osmgame/files/screenshots/ android/evidence/ || true
+          adb logcat -d > android/evidence/logcat.txt || true
+          cp "$RUNNER_TEMP/emulator.log" android/evidence/emulator.log 2>/dev/null || true
+          find android/app/build/outputs/apk -name '*.apk' -exec sha256sum {} \; > android/evidence/apk-sha256.txt || true
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: android-build-api-${{ matrix.api }}
+          retention-days: 14
+          path: |
+            android/app/build/outputs/apk/
+            android/app/build/reports/
+            android/app/build/outputs/androidTest-results/
+            android/evidence/

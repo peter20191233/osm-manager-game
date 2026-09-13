@@ -1,0 +1,117 @@
+plugins {
+    id 'com.android.application'
+}
+
+def signingValues = [
+    file: providers.environmentVariable('OSM_KEYSTORE_FILE').orNull,
+    password: providers.environmentVariable('OSM_KEYSTORE_PASSWORD').orNull,
+    alias: providers.environmentVariable('OSM_KEY_ALIAS').orNull,
+    keyPassword: providers.environmentVariable('OSM_KEY_PASSWORD').orNull,
+]
+def hasReleaseSigning = signingValues.values().every { it != null && !it.isEmpty() }
+
+android {
+    namespace 'ru.peterkorytov.osmgame'
+    compileSdk 35
+    buildToolsVersion '35.0.0'
+
+    defaultConfig {
+        applicationId 'ru.peterkorytov.osmgame'
+        minSdk 31
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+        testApplicationId 'ru.peterkorytov.osmgame.test'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(signingValues.file)
+                storePassword signingValues.password
+                keyAlias signingValues.alias
+                keyPassword signingValues.keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        main.assets.srcDir layout.buildDirectory.dir('generated/gameAssets')
+        main.res.srcDir layout.buildDirectory.dir('generated/gameResources')
+    }
+
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            if (variant.buildType.name == 'release' && hasReleaseSigning) {
+                outputFileName = 'osm-manager-game-android.apk'
+            }
+        }
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds true
+    }
+}
+
+def prepareGameAssets = tasks.register('prepareGameAssets') {
+    def standalone = rootProject.file('../dist/Играть.html')
+    def icon = rootProject.file('../assets/icon-512.png')
+    inputs.files(standalone, icon)
+    outputs.dirs(layout.buildDirectory.dir('generated/gameAssets'),
+                 layout.buildDirectory.dir('generated/gameResources'))
+    doLast {
+        if (!standalone.isFile()) {
+            throw new GradleException('Missing dist/Играть.html. Run python build_release.py from the repository root first.')
+        }
+        def assetsDir = layout.buildDirectory.dir('generated/gameAssets').get().asFile
+        assetsDir.mkdirs()
+        def html = standalone.getText('UTF-8')
+        if (!html.contains('window.osmStandalone=true') || !html.contains('window.osmReady = True')) {
+            throw new GradleException('The game HTML is not a complete standalone build.')
+        }
+        html = html.replace(
+            'Не удалось загрузить игру. Запустите файл «Запустить игру.cmd» и обновите страницу.',
+            'Не удалось загрузить игру. Закройте приложение и откройте его снова.')
+        new File(assetsDir, 'index.html').setText(html, 'UTF-8')
+        copy {
+            from icon
+            into layout.buildDirectory.dir('generated/gameResources/drawable-nodpi')
+            rename { 'game_icon.png' }
+        }
+    }
+}
+
+tasks.named('preBuild').configure { dependsOn prepareGameAssets }
+// No signing values creates app-release-unsigned.apk for CI validation.
+// A partial configuration is almost certainly a secret/configuration mistake.
+tasks.matching { it.name == 'preReleaseBuild' }.configureEach {
+    doFirst {
+        if (!hasReleaseSigning && signingValues.values().any { it != null && !it.isEmpty() }) {
+            throw new GradleException('Set all four OSM_KEYSTORE_FILE, OSM_KEYSTORE_PASSWORD, OSM_KEY_ALIAS and OSM_KEY_PASSWORD variables, or none for an unsigned validation build.')
+        }
+    }
+}
+
+dependencies {
+    // These libraries are packaged only in the test APK, never in the game APK.
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+}
