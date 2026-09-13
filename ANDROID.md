@@ -2,15 +2,17 @@
 
 Android-версия игры «Будни Операционно-Сервисного Менеджера» устанавливается из одного APK. Небольшая Android-оболочка на Java открывает встроенную игру в системном WebView; игровая логика написана на Python и выполняется встроенной библиотекой Brython. Все игровые файлы и векторная графика входят в APK. Пользователю не нужны Python, архиватор, компьютер или дополнительные загрузки. Интернет нужен для первоначального скачивания APK; сама игра работает локально.
 
-Версия приложения: **1.0.0** (`versionCode 1`). Минимальная версия системы: **Android 12 / API 31**. Идентификатор приложения: `ru.peterkorytov.osmgame`.
+Версия приложения: **1.1.0** (`versionCode 2`). Минимальная версия системы: **Android 12 / API 31**. Идентификатор приложения: `ru.peterkorytov.osmgame`.
 
-Размер APK: **309 559 байт**, примерно **0,3 МБ**. Выпуск подписан постоянным ключом и проверен на эмуляторах Android 12 и 15; результаты сохранены в [QA.md](QA.md).
+Размер APK: **947 735 байт**, примерно **0,95 МБ**. Выпуск подписан постоянным ключом и проверен на эмуляторах Android 12 и 15; результаты сохранены в [QA.md](QA.md).
+
+В версии 1.1.0 добавлена встроенная музыка «Спокойная смена», сочинённая ИИ Codex. Она запускается с началом смены; кнопка **♪** управляет музыкой и звуками. При паузе или сворачивании музыка останавливается. [О музыке](MUSIC.md).
 
 ## Скачать и установить
 
 **[Скачать osm-manager-game-android.apk с сайта](https://peter20191233.github.io/resume-site/downloads/osm-manager-game-android.apk)**
 
-[Резервная ссылка на APK в GitHub Releases](https://github.com/peter20191233/osm-manager-game/releases/download/android-v1.0.0/osm-manager-game-android.apk) · [Страница выпуска на GitHub](https://github.com/peter20191233/osm-manager-game/releases/tag/android-v1.0.0)
+[Резервная ссылка на APK в GitHub Releases](https://github.com/peter20191233/osm-manager-game/releases/download/android-v1.1.0/osm-manager-game-android.apk) · [Страница выпуска на GitHub](https://github.com/peter20191233/osm-manager-game/releases/tag/android-v1.1.0)
 
 1. Откройте ссылку на APK на Android-телефоне и дождитесь завершения скачивания.
 2. Нажмите на скачанный **`osm-manager-game-android.apk`** в уведомлении браузера. Его также можно найти в приложении **«Файлы» → «Загрузки»**.

@@ -1,9 +1,9 @@
 {
-  "source_commit": "7c7c42f797f5ada23b15e7b620bb69c6c7fd45a1",
-  "workflow_url": "https://github.com/peter20191233/osm-manager-game/actions/runs/34756643411",
+  "source_commit": "37be2a181f8b0351db36165af024aa9682173852",
+  "workflow_url": "https://github.com/peter20191233/osm-manager-game/actions/runs/34763211480",
   "filename": "osm-manager-game-android.apk",
-  "size_bytes": 309559,
-  "apk_sha256": "c85e5efe8b1e0175266b48d76f61404875ed4829142a7aadbb4570cab9adc6f7",
+  "size_bytes": 947735,
+  "apk_sha256": "051ddca9ea4fdc5959d81335f666545971bd29b8df113641b3018c9d4d658cb7",
   "certificate_sha256": "24280b33753e25bb2e90ae4af85d5862da25c44b72be76ddf86a534a58a16f7e",
   "application_files_identical_on_both_apis": true,
   "checks": [
@@ -11,7 +11,7 @@
       "status": "passed",
       "api": 31,
       "package": "ru.peterkorytov.osmgame",
-      "apk_sha256": "22452ec10f32313dda68601f50330169189b3ba9cde79da473387b88b6990a5f",
+      "apk_sha256": "75377c75264d0db5eb25f9f29e9a55fd6b3674cb0ed7f12ae5bcc410f5bd694d",
       "certificate_sha256": "24280b33753e25bb2e90ae4af85d5862da25c44b72be76ddf86a534a58a16f7e",
       "internet_permission": false,
       "wifi_and_mobile_data_disabled": true,
@@ -20,14 +20,15 @@
       "start_tap_enabled_ticket_category": true,
       "mode": "practice",
       "ticket_tap_produced_scored_feedback": true,
-      "instrumentation_tests_passed": 3,
+      "instrumentation_tests_passed": 4,
+      "bundled_music_playback_mute_pause_verified": true,
       "installed_apk_hash_and_certificate_verified": true
     },
     {
       "status": "passed",
       "api": 35,
       "package": "ru.peterkorytov.osmgame",
-      "apk_sha256": "c85e5efe8b1e0175266b48d76f61404875ed4829142a7aadbb4570cab9adc6f7",
+      "apk_sha256": "051ddca9ea4fdc5959d81335f666545971bd29b8df113641b3018c9d4d658cb7",
       "certificate_sha256": "24280b33753e25bb2e90ae4af85d5862da25c44b72be76ddf86a534a58a16f7e",
       "internet_permission": false,
       "wifi_and_mobile_data_disabled": true,
@@ -36,7 +37,8 @@
       "start_tap_enabled_ticket_category": true,
       "mode": "practice",
       "ticket_tap_produced_scored_feedback": true,
-      "instrumentation_tests_passed": 3,
+      "instrumentation_tests_passed": 4,
+      "bundled_music_playback_mute_pause_verified": true,
       "installed_apk_hash_and_certificate_verified": true
     }
   ]
