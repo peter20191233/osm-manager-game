@@ -85,7 +85,7 @@ def main(argv: list[str] | None = None) -> int:
     release_files = (
         *STATIC_FILES,
         "launcher.py", "Запустить игру.cmd", "Играть на телефоне.cmd",
-        "build_release.py", "README.md", "SOURCES.md",
+        "build_release.py", "README.md", "SOURCES.md", "ANDROID.md",
         "tests/test_engine.py", "tests/test_content.py", "tests/test_launcher.py",
     )
     missing = [name for name in release_files if not (root / name).is_file()]
