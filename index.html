@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#315c48">
+  <meta name="description" content="Будни Операционно-Сервисного Менеджера — маленькая игра о большой заботе. Выдавайте правильные талоны и помогайте клиентам.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Будни Операционно-Сервисного Менеджера</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="vendor/brython.min.js"></script>
+  <script defer src="bootstrap.js"></script>
+</head>
+<body onload="brython({debug:1,cache:true,indexedDB:false})">
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Будни ОСМ, главная"><span class="brand-icon">о<span>с</span>м</span><span class="brand-copy">Маленькая игра<br><strong>о большой заботе</strong></span></a>
+    <nav aria-label="Меню"><span class="nav-current">Игровая комната</span><button id="guide-button" class="nav-button">Справочник услуг <span>↗</span></button><button id="sound-button" class="icon-button" aria-label="Включить звук" title="Включить звук" aria-pressed="false">♪<span class="sound-off">×</span></button></nav>
+  </header>
+  <main>
+    <section class="heading-row">
+      <div><div class="eyebrow"><span></span> УЮТНЫЙ СИМУЛЯТОР БАНКОВСКОГО ОТДЕЛЕНИЯ</div><h1>Будни операционно-<br>сервисного менеджера<span class="title-spark">✳</span></h1><p class="intro">Выслушайте клиента. Выберите талон. Сделайте чей-то день проще.</p></div>
+      <div class="shift-note"><span class="note-spark">✴</span><span>Хороший день<br>начинается с вас.</span><svg viewBox="0 0 85 36" aria-hidden="true"><path d="M5 5Q47 38 77 10M64 10L78 9 76 23"/></svg></div>
+    </section>
+    <section class="toolbar" aria-label="Параметры смены"><div class="mode-switch" role="group" aria-label="Режим игры"><button id="mode-shift" class="selected" aria-pressed="true">◷ <span>Рабочая смена</span></button><button id="mode-practice" aria-pressed="false">♧ <span>Тренировка</span></button></div><div class="toolbar-right"><span id="mode-description">12 клиентов · 35 секунд на ответ</span><button id="pause-button" class="text-button" disabled>Ⅱ Пауза</button></div></section>
+    <div class="game-layout">
+      <section class="floor-panel" aria-label="Банковское отделение">
+        <div class="scene-heading"><span><span class="live-dot"></span> Отделение № 01</span><span id="scene-status">Сегодня будет хороший день</span></div>
+        <div id="scene" class="scene"><img class="bank-scene" src="scene.svg" alt="Мультяшное отделение банка: менеджер стоит рядом с терминалом, клиент подходит за талоном."><div class="scene-bubble" id="scene-bubble">Поможем каждому<br>найти своё окно<span>♡</span></div><div class="person-label">Это вы, ОСМ <span>↙</span></div><div id="visitor" class="visitor" aria-hidden="true"></div><div id="flying-ticket" class="flying-ticket" hidden>А-001</div></div>
+        <div class="queue-strip"><div class="queue-avatars" aria-hidden="true"><i>М</i><i>А</i><i>Д</i><i>Е</i></div><span id="queue-caption">Клиенты уже на подходе</span><span class="queue-tail" id="queue-count">12 за смену</span></div>
+        <div class="request-card" id="request-card"><div class="request-meta"><span id="client-name">ВАШ ПЕРВЫЙ РАБОЧИЙ ДЕНЬ</span><span id="patience-label" class="patience-label">Всё получится</span></div><h2 id="client-request">Большая помощь начинается<br>с маленького талона.</h2><div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div><div class="request-bottom"><span id="request-hint">За верный выбор +1 к рейтингу, за ошибку −1.</span><button class="primary-button" id="next-button" disabled>Загрузка…</button></div><div class="patience-track" id="patience-track" hidden><div id="patience-fill"></div></div></div>
+      </section>
+      <aside class="terminal-column">
+        <div class="stats"><div><span class="stat-label">РЕЙТИНГ</span><strong><span class="rating-star">★</span> <span id="score">0</span></strong></div><div><span class="stat-label">ОБСЛУЖЕНО</span><strong><span id="served">0</span><small> / 12</small></strong></div><div><span class="stat-label">ПОДРЯД ВЕРНО</span><strong><span class="streak-icon">ϟ</span> <span id="combo">0</span></strong></div></div>
+        <section class="terminal" aria-labelledby="terminal-title"><div class="terminal-topline"><span><span class="live-dot"></span> ЭЛЕКТРОННАЯ ОЧЕРЕДЬ</span><span>№ 01</span></div><h2 id="terminal-title">Куда направим клиента?</h2><p>Выберите нужный раздел терминала</p><div class="category-grid" id="category-grid"></div><div class="printer"><div class="printer-slot"></div><span id="printer-label">Здесь появится ваш талон</span></div></section>
+        <div class="little-tip"><span>✦</span><p><strong>Меньше ожидания — больше улыбок.</strong><br>Правильный талон ведёт к нужному специалисту.</p></div>
+      </aside>
+    </div>
+    <footer><span>С заботой о тех, кто заботится о клиентах <span class="footer-heart">♡</span></span><button id="about-button">Об игре и источниках</button><span id="best-label">Ваш рекорд ещё впереди</span></footer>
+    <div id="load-error" class="load-error" hidden>Не удалось загрузить игру. Запустите файл «Запустить игру.cmd» и обновите страницу.</div>
+    <noscript>Для игры необходимо включить JavaScript: он запускает код Python в браузере.</noscript>
+  </main>
+  <dialog id="modal"><div class="modal-heading"><span class="eyebrow">БУДНИ ОСМ</span><button id="modal-close" class="icon-button" aria-label="Закрыть">×</button></div><div id="modal-content"></div></dialog>
+  <script type="text/python" src="engine.py" id="engine"></script>
+  <script type="text/python" src="content.py" id="content"></script>
+  <script type="text/python" src="game.py"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 350" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Светлое отделение банка</title>
+  <desc id="desc">Уютный зал с окнами, растениями, двумя стойками сотрудников, местами ожидания и терминалом. Рядом с терминалом стоит улыбающийся операционно-сервисный менеджер в зелёном пиджаке.</desc>
+  <defs>
+    <linearGradient id="wall" x1="360" y1="0" x2="360" y2="217" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EFF2E6"/><stop offset="1" stop-color="#E6ECDC"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="360" y1="205" x2="360" y2="350" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E7DCC6"/><stop offset="1" stop-color="#F3EBDD"/>
+    </linearGradient>
+    <linearGradient id="window" x1="75" y1="38" x2="75" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9E8E2"/><stop offset="1" stop-color="#EDF3DB"/>
+    </linearGradient>
+    <linearGradient id="coat" x1="531" y1="206" x2="574" y2="250" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#568C73"/><stop offset="1" stop-color="#38735C"/>
+    </linearGradient>
+    <linearGradient id="kiosk" x1="442" y1="204" x2="483" y2="292" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFF9"/><stop offset="1" stop-color="#E7EBDE"/>
+    </linearGradient>
+    <pattern id="floorboards" width="170" height="46" patternUnits="userSpaceOnUse" patternTransform="matrix(1 .12 -.5 1 0 0)">
+      <path d="M0 0H170M85 0V46" stroke="#C9B995" stroke-opacity=".14"/>
+    </pattern>
+    <clipPath id="scene"><rect width="720" height="350" rx="22"/></clipPath>
+  </defs>
+  <g clip-path="url(#scene)">
+    <!-- Warm daylight and a quiet, uncluttered background. -->
+    <path fill="url(#wall)" d="M0 0h720v222H0z"/>
+    <path fill="#DAE3CF" d="M0 198h720v22H0z"/>
+    <path fill="url(#floor)" d="M0 213h720v137H0z"/>
+    <path fill="url(#floorboards)" d="M0 217h720v133H0z"/>
+    <path d="M0 213h720" stroke="#D0D8C2" stroke-width="3"/>
+    <path d="m60 130 170 1 39 84H30z" fill="#FFFCEF" opacity=".22"/>
+
+    <!-- The upper-left corner stays quiet behind the HTML speech bubble. -->
+    <rect x="54" y="36" width="171" height="97" rx="9" fill="#CED9C8"/>
+    <rect x="59" y="40" width="161" height="86" rx="6" fill="url(#window)"/>
+    <path d="M64 108c27-29 37-12 60-18 16-5 30-20 45-16 20 4 29 23 46 20v27H64z" fill="#C6D6BC" opacity=".72"/>
+    <path d="M102 42v82m67-82v82M61 80h157" stroke="#F8FAEF" stroke-width="6"/>
+    <path d="m72 49 23-3-31 64v-28zm69-5h19l-39 79h-16z" fill="#FFFDF2" opacity=".32"/>
+    <rect x="48" y="125" width="183" height="8" rx="4" fill="#FAFAEF"/>
+    <path d="M57 135h165" stroke="#D1DAC6" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Small wall print and clock. -->
+    <rect x="274" y="39" width="69" height="61" rx="5" fill="#C8D1BA"/>
+    <rect x="278" y="43" width="61" height="53" rx="3" fill="#FFFBED"/>
+    <circle cx="310" cy="63" r="10" fill="#E6C780"/>
+    <path d="m283 90 19-21 12 12 10-9 10 18z" fill="#ACBE99"/>
+    <path d="m283 90 11-12 17 12z" fill="#719A81"/>
+    <circle cx="404" cy="65" r="23" fill="#D0DBC8"/>
+    <circle cx="404" cy="63" r="21" fill="#FFFEF4" stroke="#AABD9F" stroke-width="2"/>
+    <path d="M404 49v3m14 11h-3m-11 14v-3m-14-11h3" stroke="#AABD9F" stroke-width="2" stroke-linecap="round"/>
+    <path d="M404 53v10l8 5" stroke="#6C8B72" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="404" cy="63" r="2.5" fill="#6C8B72"/>
+
+    <!-- Queue board. -->
+    <rect x="527" y="43" width="130" height="81" rx="11" fill="#C6D3BE"/>
+    <rect x="523" y="39" width="130" height="80" rx="10" fill="#F8F8EB"/>
+    <rect x="531" y="47" width="114" height="63" rx="6" fill="#416F5A"/>
+    <g font-family="Arial, sans-serif" text-anchor="middle">
+      <text x="588" y="61" fill="#D8E4C8" font-size="7" font-weight="700" letter-spacing="1.4">ДОБРО ПОЖАЛОВАТЬ</text>
+      <text x="560" y="80" fill="#FFF8D9" font-size="13" font-weight="700">A-014</text>
+      <text x="617" y="80" fill="#FFF8D9" font-size="13" font-weight="700">01</text>
+      <text x="560" y="100" fill="#DDEBCF" font-size="13" font-weight="700">K-008</text>
+      <text x="617" y="100" fill="#DDEBCF" font-size="13" font-weight="700">02</text>
+    </g>
+    <path d="M591 76h9m-3-3 3 3-3 3m-6 17h9m-3-3 3 3-3 3" stroke="#ABC7A8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M539 86h98" stroke="#8EAC86" stroke-opacity=".35"/>
+
+    <!-- Two operators behind compact wood counters. -->
+    <ellipse cx="177" cy="208" rx="57" ry="8" fill="#A5A986" opacity=".14"/>
+    <path d="M153 156q-2-28 23-28t23 28" fill="#66907C"/>
+    <path d="m168 135 8 12 8-12" fill="#F9F7E8"/>
+    <rect x="171" y="125" width="11" height="13" rx="5" fill="#DBA17D"/>
+    <ellipse cx="177" cy="118" rx="14" ry="17" fill="#EDBB95"/>
+    <path d="M164 121c-7-25 26-30 28-8-9 0-14-6-16-9-2 8-6 12-12 12z" fill="#817160"/>
+    <path d="M183 113q9 5 7 15l-4 1z" fill="#817160"/>
+    <path d="m171 121 1 .2m11-.2 1 .2" stroke="#766154" stroke-width="2" stroke-linecap="round"/>
+    <path d="M174 129q4 2 7-1" stroke="#B07660" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="m130 163 20-12h75l-10 15z" fill="#E7D4AD"/>
+    <path d="M130 163h85v41h-85z" fill="#D5BD94"/>
+    <path d="m215 163 10-12v43l-10 10z" fill="#BEA681"/>
+    <path d="M131 170h83v7h-83" fill="#DDC79F"/>
+    <rect x="139" y="132" width="30" height="22" rx="3" fill="#6F8A77"/>
+    <rect x="142" y="135" width="24" height="15" rx="1.5" fill="#CCE0CC"/>
+    <path d="M154 154v5m-7 0h14" stroke="#7E9680" stroke-width="3" stroke-linecap="round"/>
+    <rect x="188" y="155" width="20" height="3" rx="1.5" fill="#FAF6E7"/>
+    <circle cx="176" cy="187" r="10" fill="#F3E7C8"/>
+    <text x="176" y="191" font-family="Arial, sans-serif" text-anchor="middle" fill="#8D7F5F" font-size="10" font-weight="700">01</text>
+
+    <ellipse cx="382" cy="207" rx="56" ry="8" fill="#A5A986" opacity=".14"/>
+    <path d="M351 153q0-26 23-26t24 26" fill="#88A68D"/>
+    <path d="m366 133 8 11 7-11" fill="#FAF7E8"/>
+    <rect x="369" y="124" width="10" height="12" rx="4" fill="#D9A17E"/>
+    <ellipse cx="374" cy="116" rx="14" ry="17" fill="#F0C19A"/>
+    <path d="M361 117c-8-26 24-30 27-11l-1 9-5-11q-9 7-20 3z" fill="#776C59"/>
+    <path d="M367 118h1m10 0h1" stroke="#75604D" stroke-width="2" stroke-linecap="round"/>
+    <path d="M371 125q4 3 7-1" stroke="#B87E62" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="m337 162 14-11h80l-9 13z" fill="#E7D4AD"/>
+    <path d="M337 162h85v42h-85z" fill="#D5BD94"/>
+    <path d="m422 162 9-11v43l-9 10z" fill="#BEA681"/>
+    <path d="M338 170h83v7h-83" fill="#DDC79F"/>
+    <rect x="382" y="131" width="29" height="22" rx="3" fill="#6F8A77"/>
+    <rect x="385" y="134" width="23" height="15" rx="1.5" fill="#CCE0CC"/>
+    <path d="M397 153v6m-7 0h14" stroke="#7E9680" stroke-width="3" stroke-linecap="round"/>
+    <rect x="351" y="155" width="19" height="3" rx="1.5" fill="#FAF6E7"/>
+    <circle cx="379" cy="187" r="10" fill="#F3E7C8"/>
+    <text x="379" y="191" font-family="Arial, sans-serif" text-anchor="middle" fill="#8D7F5F" font-size="10" font-weight="700">02</text>
+
+    <!-- Waiting chairs remain outside the client's foreground entrance. -->
+    <ellipse cx="97" cy="285" rx="66" ry="9" fill="#A39F7E" opacity=".12"/>
+    <g stroke="#A39B7A" stroke-width="4" stroke-linecap="round">
+      <path d="m48 259-5 20m36-20 4 20m18-20-5 20m36-20 4 20"/>
+    </g>
+    <path d="M43 226q0-9 9-9h20q9 0 9 9v29H43z" fill="#77997E"/>
+    <path d="M47 224q0-4 5-4h20q5 0 5 4v24H47z" fill="#A0B397"/>
+    <path d="M40 253h44v8H40z" fill="#698F76"/>
+    <rect x="39" y="249" width="46" height="10" rx="5" fill="#B6C4A6"/>
+    <path d="M98 226q0-9 9-9h20q9 0 9 9v29H98z" fill="#77997E"/>
+    <path d="M102 224q0-4 5-4h20q5 0 5 4v24h-30z" fill="#A0B397"/>
+    <path d="M95 253h44v8H95z" fill="#698F76"/>
+    <rect x="94" y="249" width="46" height="10" rx="5" fill="#B6C4A6"/>
+
+    <!-- Plants soften the edges of the room. -->
+    <ellipse cx="27" cy="226" rx="21" ry="5" fill="#A6AD89" opacity=".2"/>
+    <path d="m14 199 4 25q10 7 20 0l4-25" fill="#CCB592"/>
+    <ellipse cx="28" cy="199" rx="14" ry="5" fill="#AD9B7D"/>
+    <path d="M28 200v-46m0 34-12-20m12 7 13-24" stroke="#8AA478" stroke-width="3" stroke-linecap="round"/>
+    <path d="M28 174c-19-4-22-18-19-27 12 3 19 15 19 27z" fill="#9BB48B"/>
+    <path d="M29 173c1-19 10-28 22-26 0 13-10 24-22 26z" fill="#7EA181"/>
+    <path d="M26 158c-12-12-8-28 0-33 9 9 10 23 0 33z" fill="#789C79"/>
+    <path d="M28 190c-15 0-23-8-21-18 14-1 19 8 21 18z" fill="#6C9677"/>
+    <path d="M29 189c1-12 12-21 21-15-1 10-9 16-21 15z" fill="#A7BA8E"/>
+
+    <ellipse cx="667" cy="261" rx="29" ry="7" fill="#A0A686" opacity=".17"/>
+    <path d="m647 224 6 32q14 9 28 0l6-32" fill="#F3F1DE"/>
+    <path d="m676 228-2 30q5 0 7-2l6-32z" fill="#E0E2CC"/>
+    <ellipse cx="667" cy="224" rx="20" ry="7" fill="#D3D7BC"/>
+    <ellipse cx="667" cy="224" rx="15" ry="4" fill="#A39B7A"/>
+    <path d="M667 225v-67m0 47-20-22m21 8 23-26" stroke="#719570" stroke-width="4" stroke-linecap="round"/>
+    <path d="M666 179c-19-15-17-36-5-47 16 9 18 30 5 47z" fill="#80A580"/>
+    <path d="M670 187c1-26 22-37 33-30-2 19-15 30-33 30z" fill="#5F9075"/>
+    <path d="M666 206c-25-2-38-19-31-31 19-2 30 13 31 31z" fill="#91AF88"/>
+    <path d="M670 215c4-22 18-30 31-23-2 17-15 24-31 23z" fill="#A1B98C"/>
+
+    <!-- Ticket kiosk; screen uses vector cards and a real paper slot. -->
+    <ellipse cx="466" cy="309" rx="46" ry="9" fill="#7E9176" opacity=".16"/>
+    <path d="m439 292-14 14q0 4 8 5h54q7-1 7-5l-15-14z" fill="#C6CEB9"/>
+    <path d="m444 212-10 85q20 8 49 0l-6-85" fill="url(#kiosk)"/>
+    <path d="m469 214 8-2 6 85-12 3z" fill="#D5DEC9"/>
+    <path d="m433 179 49 4q5 0 6 5l6 48-55-4-11-45q-1-7 5-8z" fill="#C3CFBA"/>
+    <path d="m428 180 49 3q5 0 6 5l5 45-55-4-10-41q-2-7 5-8z" fill="#FDFDF3"/>
+    <path d="m430 189 45 3 4 29-43-3z" fill="#557F68"/>
+    <path d="m433 193 39 3 3 22-36-2z" fill="#E8F0DC"/>
+    <path d="m438 198 12 1 .7 6-11.5-.6zm17 1 13 1 .7 6-13-.7z" fill="#86AD88"/>
+    <path d="m440 208 11 1 .6 4-10.7-.7zm16 1 13 .6 .5 4-12.9-.6z" fill="#D1BE83"/>
+    <path d="m451 225 13 1" stroke="#C4CFB9" stroke-width="2" stroke-linecap="round"/>
+    <path d="m444 247 28 1" stroke="#8C9E84" stroke-width="5" stroke-linecap="round"/>
+    <path d="m449 248 18 .7-1 16-4-2-4 2-4-2-4 2z" fill="#FFFFF9" stroke="#D9DFC8" stroke-width=".8"/>
+    <path d="m453 253 9 .5m-9 4 7 .3" stroke="#A8B59B" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="458" cy="281" r="4" fill="#91AD86"/>
+    <circle cx="458" cy="281" r="1.6" fill="#DDECCD"/>
+
+    <!-- Friendly OSM, standing beside the terminal and pointing to it. -->
+    <ellipse cx="549" cy="308" rx="33" ry="7" fill="#7E9176" opacity=".17"/>
+    <path d="m531 248 16 1-3 51h-13z" fill="#647766"/>
+    <path d="m549 249 15-1 3 53h-13z" fill="#526C5D"/>
+    <path d="M530 297h15v9q-11 5-21 1-1-5 6-10z" fill="#6B6D59"/>
+    <path d="M554 298h13q10 5 10 9-10 5-23 0z" fill="#6B6D59"/>
+    <path d="M531 305q5 2 12 0m13 1q8 2 16 0" stroke="#979985" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M537 194h20l8 50q-18 8-36 0z" fill="#FEFBED"/>
+    <path d="M533 195q-10 1-15 12l-10 15-15-5-4 9 22 10q5 1 8-4l9-12-3 30q12 5 18 1l1-44z" fill="url(#coat)"/>
+    <path d="M554 195q16 1 18 16l4 30-9 1-7-28 7 38q-11 3-20 0l-2-45z" fill="url(#coat)"/>
+    <path d="m534 196 10 12-6 8-7-18m22-2-8 12 7 8 5-18" fill="#8BB096"/>
+    <path d="m541 198 4 7 5-7" stroke="#DADCCC" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M545 216v33" stroke="#2C624C" stroke-width="1.3" opacity=".5"/>
+    <circle cx="548" cy="233" r="1.5" fill="#BFD1AF"/>
+    <path d="M532 237h7m16 0h6" stroke="#2C624C" stroke-width="1.5" stroke-linecap="round"/>
+    <rect x="553" y="212" width="12" height="9" rx="1.8" fill="#FFF9DE" transform="rotate(-4 553 212)"/>
+    <circle cx="556" cy="216" r="1.5" fill="#CDB982"/>
+    <path d="M560 215h3m-3 3h3" stroke="#A4B19A" stroke-width="1" stroke-linecap="round"/>
+    <path d="m493 217-7-6q-3-2-5-1l-8 1q-3 1-1 3l10 1-2 3q-2 3 2 5l8 3z" fill="#EDBA91"/>
+    <path d="m568 241 7-1 2 8q0 5-4 6-5 0-5-4z" fill="#EDBA91"/>
+    <path d="M539 187h14v14q-7 8-14 0z" fill="#DFA77D"/>
+    <path d="M530 174c-10-23 4-31 17-31 22 0 29 24 18 45l-3 9-9-7-16-1-8 5z" fill="#866D54"/>
+    <ellipse cx="546" cy="177" rx="18" ry="22" fill="#F2C39B"/>
+    <path d="M529 174c-4-14 2-27 17-28 16-1 24 12 22 28-12-3-19-10-22-16-2 9-8 15-17 16z" fill="#927557"/>
+    <path d="M532 159q9-10 22-6" stroke="#AC8C68" stroke-width="3" stroke-linecap="round"/>
+    <path d="M531 175q-7-3-5 4 1 5 6 4m31-8q7-3 5 4-1 5-5 4" fill="#EDBA91"/>
+    <path d="M537 176h1m16 0h1" stroke="#71614C" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="m545 178-1 5h3" stroke="#D69C73" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <ellipse cx="535" cy="183" rx="3.6" ry="2" fill="#E5A58C" opacity=".62"/>
+    <ellipse cx="558" cy="183" rx="3.6" ry="2" fill="#E5A58C" opacity=".62"/>
+    <path d="M540 187q6 7 12 0" fill="#FFF8E9"/>
+    <path d="M540 187q6 7 12 0" stroke="#AF765D" stroke-width="1.3" stroke-linecap="round"/>
+    <circle cx="531" cy="185" r="1.8" fill="#E6C77F"/>
+    <circle cx="562" cy="185" r="1.8" fill="#E6C77F"/>
+
+    <!-- A few understated wayfinding marks; central foreground stays empty. -->
+    <path d="M364 284h21m-6-5 6 5-6 5" stroke="#FDFBEF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+    <path d="M360 293h32" stroke="#D2C7AC" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+  </g>
+</svg>
