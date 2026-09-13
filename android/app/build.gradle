@@ -45,6 +45,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            testProguardFiles 'test-proguard-rules.pro'
         }
     }
 
@@ -115,6 +116,4 @@ dependencies {
     // These libraries are packaged only in the test APK, never in the game APK.
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    // AndroidX references these annotations; release-test R8 validates them.
-    androidTestImplementation 'com.google.errorprone:error_prone_annotations:2.36.0'
 }
