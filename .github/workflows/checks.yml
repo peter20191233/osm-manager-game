@@ -1,0 +1,50 @@
+name: Python and web builds
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Test Python
+        run: python -m unittest discover -s tests -v
+      - name: Build standalone HTML, source ZIP and PWA
+        run: |
+          python build_release.py
+          python build_webapp.py
+      - name: Verify and rebuild the portable ZIP
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess
+          import sys
+          from tempfile import TemporaryDirectory
+          from zipfile import ZipFile
+
+          with TemporaryDirectory() as extracted:
+              with ZipFile('dist/osm-game.zip') as archive:
+                  assert archive.testzip() is None, 'Corrupt release archive'
+                  assert archive.read('Играть.html') == Path('dist/Играть.html').read_bytes()
+                  archive.extractall(extracted)
+              subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v'],
+                             cwd=extracted, check=True)
+              subprocess.run([sys.executable, 'build_release.py'], cwd=extracted, check=True)

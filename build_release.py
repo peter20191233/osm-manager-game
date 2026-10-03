@@ -54,18 +54,22 @@ def inline_game(root: Path) -> str:
     replace_once('href="assets/icon.svg"', f'href="{data_uri("assets/icon.svg", "image/svg+xml")}"')
     replace_once('href="assets/icon-192.png"', f'href="{data_uri("assets/icon-192.png", "image/png")}"')
     page = page.replace('class="brand" href="./"', 'class="brand" href="#"')
-    game = (root / "game.py").read_text(encoding="utf-8")
-    for statement in (
-        "from engine import GameSession",
-        "from content import CATEGORIES, SCENARIOS, OFFICIAL_SOURCES",
-    ):
-        if game.splitlines().count(statement) != 1:
-            raise ValueError(f"Expected exactly one Python import: {statement}")
-        game = "\n".join(line for line in game.splitlines() if line != statement)
+    def python_module(name: str, imports: tuple[str, ...] = ()) -> str:
+        source = (root / name).read_text(encoding="utf-8")
+        lines = source.splitlines()
+        for statement in imports:
+            if lines.count(statement) != 1:
+                raise ValueError(f"Expected exactly one Python import in {name}: {statement}")
+        return "\n".join(line for line in lines if line not in imports)
+
+    # Inline dependencies before their consumers, removing only local imports.
     python_source = "\n\n".join((
-        (root / "engine.py").read_text(encoding="utf-8"),
-        (root / "content.py").read_text(encoding="utf-8"),
-        game,
+        python_module("content.py"),
+        python_module("engine.py", ("from content import CATEGORIES",)),
+        python_module("game.py", (
+            "from engine import GameSession",
+            "from content import CATEGORIES, SCENARIOS, OFFICIAL_SOURCES",
+        )),
     ))
     # This catches source-combination errors before producing a broken release.
     compile(python_source, "Играть.html", "exec")
@@ -88,6 +92,7 @@ def main(argv: list[str] | None = None) -> int:
         "launcher.py", "Запустить игру.cmd", "Играть на телефоне.cmd",
         "build_release.py", "README.md", "SOURCES.md", "ANDROID.md", "IOS.md", "MUSIC.md",
         "tests/test_engine.py", "tests/test_content.py", "tests/test_launcher.py",
+        "tests/test_build_release.py",
     )
     missing = [name for name in release_files if not (root / name).is_file()]
     if missing:

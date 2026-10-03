@@ -5,12 +5,12 @@
 """
 
 CATEGORIES = [
-    {"id": "accounts", "title": "Счета и карты", "subtitle": "Получить карту, открыть текущий счёт", "code": "А", "icon": "card"},
-    {"id": "credit", "title": "Кредитные продукты", "subtitle": "Кредитка, кредит, ипотека", "code": "К", "icon": "credit"},
-    {"id": "savings", "title": "Вклады и накопления", "subtitle": "Вклад или накопительный счёт", "code": "В", "icon": "savings"},
-    {"id": "cash", "title": "Операции с наличными", "subtitle": "Выдать или принять деньги в кассе", "code": "Н", "icon": "cash"},
-    {"id": "insurance", "title": "Страховые продукты", "subtitle": "Полис для дома, машины, поездки", "code": "С", "icon": "shield"},
-    {"id": "transfers", "title": "Платежи и переводы", "subtitle": "Перевести деньги, оплатить услуги", "code": "П", "icon": "transfer"},
+    {"id": "accounts", "title": "Счета и карты", "subtitle": "Получение и обслуживание", "code": "А", "icon": "card"},
+    {"id": "credit", "title": "Кредитные продукты", "subtitle": "Кредитки, кредиты, ипотека", "code": "К", "icon": "credit"},
+    {"id": "savings", "title": "Вклады и накопления", "subtitle": "Сбережения и проценты", "code": "В", "icon": "savings"},
+    {"id": "cash", "title": "Операции с наличными", "subtitle": "Внести или снять в кассе", "code": "Н", "icon": "cash"},
+    {"id": "insurance", "title": "Страховые продукты", "subtitle": "Полисы и защита", "code": "С", "icon": "shield"},
+    {"id": "transfers", "title": "Платежи и переводы", "subtitle": "Оплата услуг и переводы", "code": "П", "icon": "transfer"},
 ]
 
 OFFICIAL_SOURCES = [

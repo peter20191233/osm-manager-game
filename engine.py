@@ -1,27 +1,15 @@
 """Portable game rules shared by CPython and the browser's Python runtime.
 
-This module intentionally has no imports or external dependencies. Time only
-passes when the application calls ``tick`` with elapsed, visible game time.
+Category labels come from the shared content metadata. Time only passes when
+the application calls ``tick`` with elapsed, visible game time.
 """
 
 
-CATEGORY_CODES = {
-    "accounts": "A",
-    "credit": "K",
-    "savings": "B",
-    "cash": "H",
-    "insurance": "C",
-    "transfers": "P",
-}
+from content import CATEGORIES
 
-CATEGORY_TITLES = {
-    "accounts": "Счета и карты",
-    "credit": "Кредитные продукты",
-    "savings": "Вклады и накопления",
-    "cash": "Операции с наличными",
-    "insurance": "Страховые продукты",
-    "transfers": "Платежи и переводы",
-}
+
+CATEGORY_CODES = {item["id"]: item["code"] for item in CATEGORIES}
+CATEGORY_TITLES = {item["id"]: item["title"] for item in CATEGORIES}
 
 
 class _Random:

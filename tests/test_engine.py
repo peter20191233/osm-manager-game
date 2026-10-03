@@ -135,11 +135,11 @@ class GameSessionTests(unittest.TestCase):
     def test_tickets_number_separately_and_match_chosen_category(self):
         game = GameSession(scenarios(), mode="practice", shift_length=3)
         game.start()
-        self.assertEqual(game.answer("accounts")["ticket"], "A-001")
+        self.assertEqual(game.answer("accounts")["ticket"], "А-001")
         game.advance()
-        self.assertEqual(game.answer("credit")["ticket"], "K-001")
+        self.assertEqual(game.answer("credit")["ticket"], "К-001")
         game.advance()
-        self.assertEqual(game.answer("accounts")["ticket"], "A-002")
+        self.assertEqual(game.answer("accounts")["ticket"], "А-002")
 
     def test_unknown_category_does_not_use_up_client(self):
         game = GameSession(scenarios())
@@ -198,7 +198,7 @@ class GameSessionTests(unittest.TestCase):
         self.assertEqual(game.answered_count, 0)
         self.assertEqual(game.remaining_seconds, 35)
         self.assertFalse(game.paused)
-        self.assertEqual(game.answer("accounts")["ticket"], "A-001")
+        self.assertEqual(game.answer("accounts")["ticket"], "А-001")
 
     def test_read_results_cannot_mutate_internal_state(self):
         data = scenarios()
