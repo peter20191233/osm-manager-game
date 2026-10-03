@@ -14,7 +14,10 @@ async function run(name) {
   assert.ok(['webkit', 'chromium'].includes(name), 'Unsupported browser '+name);
   const browser = await browsers[name].launch({headless:true});
   try {
-    const context = await browser.newContext({viewport:{width:1280,height:900},offline:true});
+    const context = await browser.newContext({viewport:{width:1280,height:900}});
+    // WebKit's offline emulation rejects even file navigation. Block network
+    // requests directly so the actual standalone file can still be opened.
+    await context.route(/^https?:\/\//, route => route.abort('internetdisconnected'));
     const page = await context.newPage();
     const errors = [];
     const dependencies = [];
@@ -40,7 +43,7 @@ async function run(name) {
     assert.equal(await page.locator('#client-name').innerText().then(value => value.endsWith('КЛИЕНТ 02')), true);
     assert.deepEqual(errors, []);
     assert.deepEqual(dependencies, [], 'The HTML must not load any external files or network resources');
-    const result = {browser:name,version:browser.version(),platform:process.platform,standaloneFile:true,offline:true,correctAnswer:true,ticket,nextClient:true,pageErrors:errors,externalDependencies:dependencies};
+    const result = {browser:name,version:browser.version(),platform:process.platform,standaloneFile:true,networkRequestsBlocked:true,correctAnswer:true,ticket,nextClient:true,pageErrors:errors,externalDependencies:dependencies};
     fs.writeFileSync(path.join(evidence,name+'-standalone.json'),JSON.stringify(result,null,2));
     console.log(JSON.stringify(result));
   } finally { await browser.close(); }
