@@ -1,4 +1,4 @@
-name: Web app audio on macOS
+name: Web and standalone game on macOS
 on:
   workflow_dispatch:
 permissions:
@@ -13,6 +13,7 @@ jobs:
           persist-credentials: false
       - name: Build self-contained web app
         run: |
+          python3 build_release.py
           python3 build_webapp.py
           mkdir -p .publishing
           python3 -c "import content,json,pathlib; pathlib.Path('.publishing/pwa-scenarios.json').write_text(json.dumps(content.SCENARIOS),encoding='utf-8')"
@@ -26,6 +27,12 @@ jobs:
           PWA_FIXTURES: ${{ github.workspace }}/.publishing/pwa-scenarios.json
           PWA_BROWSERS: webkit
         run: node pwa/verify.cjs
+      - name: Verify standalone HTML without a server or network
+        env:
+          PLAYWRIGHT_MODULE: ${{ github.workspace }}/.publishing/web-test/node_modules/playwright
+          PWA_FIXTURES: ${{ github.workspace }}/.publishing/pwa-scenarios.json
+          PWA_BROWSERS: webkit
+        run: node pwa/verify-standalone.cjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
