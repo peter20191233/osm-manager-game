@@ -13,14 +13,6 @@ ICONS = {
     "shield": '<path d="M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6"/>',
     "transfer": '<path d="M3 7h17m-5-4 5 4-5 4M21 17H4m5-4-5 4 5 4"/>',
 }
-SHORT_SUBTITLES = {
-    "accounts": "Получение и обслуживание",
-    "credit": "Кредитки, кредиты, ипотека",
-    "savings": "Сбережения и проценты",
-    "cash": "Внести или снять в кассе",
-    "insurance": "Полисы и защита",
-    "transfers": "Оплата услуг и переводы",
-}
 GUIDE = {
     "accounts": "Получить готовую карту, оформить дебетовую, перевыпустить её или открыть текущий счёт. Готовая карта → сюда; новая кредитка → кредитные продукты.",
     "credit": "Подать заявку на кредитную карту, кредит наличными, ипотеку или рефинансирование. Кредит наличными — это оформление займа, а не выдача денег в кассе.",
@@ -225,8 +217,6 @@ def feedback(result):
         document["category-" + result["chosen"]].class_name = "category-button wrong"
     ticket = result["ticket"]
     if ticket:
-        # Keep printed prefixes consistent with the terminal's Russian labels.
-        ticket = categories[result["chosen"]]["code"] + ticket[1:]
         document["flying-ticket"].text = ticket
         document["flying-ticket"].hidden = False
         document["printer-label"].text = "Талон " + ticket + " · " + categories[result["chosen"]]["title"]
@@ -416,7 +406,7 @@ for index, item in enumerate(CATEGORIES):
     category_id = item["id"]
     button = html.BUTTON(id="category-" + category_id, Class="category-button", disabled=True)
     button.attrs["aria-label"] = item["title"]
-    button.html = icon(item["icon"]) + '<span class="key-hint">' + str(index + 1) + '</span><span class="category-title">' + escape(item["title"]) + '</span><span class="category-subtitle">' + escape(SHORT_SUBTITLES[category_id]) + '</span>'
+    button.html = icon(item["icon"]) + '<span class="key-hint">' + str(index + 1) + '</span><span class="category-title">' + escape(item["title"]) + '</span><span class="category-subtitle">' + escape(item["subtitle"]) + '</span>'
     button.bind("click", lambda event, category_id=category_id: choose(category_id))
     document["category-grid"] <= button
 
